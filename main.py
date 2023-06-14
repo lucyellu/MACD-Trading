@@ -5,7 +5,7 @@ from AlgorithmImports import *
 class IntradayMACDAlgorithm(QCAlgorithm):
 
     def Initialize(self):
-        self.SetStartDate(2023, 1, 1)
+        self.SetStartDate(2023, 6, 1)
         self.SetCash(100000)
 
         ticker = self.GetParameter("ticker") or "AAPL"
@@ -28,8 +28,8 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         self.SetWarmUp(26)
 
         self.previous_histograms = {key: None for key in self.macds.keys()}
-        self.histogram_threshold = 0.1
-        self.min_required_signals = 6
+        self.histogram_threshold = 0.15
+        self.min_required_signals = 5
 
     def custom_macd(self, minutes):
         macd = self.MACD(self.symbol, 12, 26, 9, MovingAverageType.Wilders, Resolution.Minute, Field.SevenBar)
