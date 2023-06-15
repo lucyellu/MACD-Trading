@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 
 #'''
 
+
 class IntradayMACDAlgorithm(QCAlgorithm):
 
     def Initialize(self):
@@ -34,23 +35,23 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         self.SetWarmUp(26)
 
         self.buy_threshold = {
-            '1d': float(self.GetParameter("buy_threshold_1d") or 1),
-            '1h': float(self.GetParameter("buy_threshold_1h") or 0.2),
-            '1m': float(self.GetParameter("buy_threshold_1m") or 0.15),
-            '5m': float(self.GetParameter("buy_threshold_5m") or 0.05),
+            '1d': float(self.GetParameter("buy_threshold_1d") or 0.5),
+            '1h': float(self.GetParameter("buy_threshold_1h") or 0.1),
+            '1m': float(self.GetParameter("buy_threshold_1m") or 0.1),
+            '5m': float(self.GetParameter("buy_threshold_5m") or 0.1),
             '15m': float(self.GetParameter("buy_threshold_15m") or 0.1),
-            '1w': float(self.GetParameter("buy_threshold_1w") or 1),
-            '1M': float(self.GetParameter("buy_threshold_1M") or 2), 
+            '1w': float(self.GetParameter("buy_threshold_1w") or 0.5),
+            '1M': float(self.GetParameter("buy_threshold_1M") or 0.5), 
         }
 
         self.sell_threshold = {
             '1d': float(self.GetParameter("sell_threshold_1d") or 1.5),
             '1h': float(self.GetParameter("sell_threshold_1h") or 0.25),
             '1m': float(self.GetParameter("sell_threshold_1m") or 0.15),
-            '5m': float(self.GetParameter("sell_threshold_5m") or 0.05),
+            '5m': float(self.GetParameter("sell_threshold_5m") or 0.1),
             '15m': float(self.GetParameter("sell_threshold_15m") or 0.1),
             '1w': float(self.GetParameter("sell_threshold_1w") or 1.5),
-            '1M': float(self.GetParameter("sell_threshold_1M") or 2.5),
+            '1M': float(self.GetParameter("sell_threshold_1M") or 1.5),
         }
 
         self.min_buy_signals = int(self.GetParameter("min_buy_signals") or 4)
