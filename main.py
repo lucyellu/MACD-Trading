@@ -1,7 +1,8 @@
 from AlgorithmImports import *
 from datetime import timedelta, datetime
 
-'''
+#'''
+
 class IntradayMACDAlgorithm(QCAlgorithm):
 
     def Initialize(self):
@@ -20,7 +21,6 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         self.AddEquity(ticker, Resolution.Minute)
         self.symbol = self.Securities[ticker].Symbol
 
-        # Create and register custom consolidators for 5-minute, 15-minute, weekly, and monthly intervals
         self.macds = {
             '1d': self.MACD(self.symbol, 12, 26, 9, MovingAverageType.Wilders, Resolution.Daily, Field.SevenBar),
             '1h': self.MACD(self.symbol, 12, 26, 9, MovingAverageType.Wilders, Resolution.Hour, Field.SevenBar),
@@ -33,10 +33,30 @@ class IntradayMACDAlgorithm(QCAlgorithm):
 
         self.SetWarmUp(26)
 
+        self.buy_threshold = {
+            '1d': float(self.GetParameter("buy_threshold_1d") or 1),
+            '1h': float(self.GetParameter("buy_threshold_1h") or 0.2),
+            '1m': float(self.GetParameter("buy_threshold_1m") or 0.15),
+            '5m': float(self.GetParameter("buy_threshold_5m") or 0.05),
+            '15m': float(self.GetParameter("buy_threshold_15m") or 0.1),
+            '1w': float(self.GetParameter("buy_threshold_1w") or 1),
+            '1M': float(self.GetParameter("buy_threshold_1M") or 2), 
+        }
+
+        self.sell_threshold = {
+            '1d': float(self.GetParameter("sell_threshold_1d") or 1.5),
+            '1h': float(self.GetParameter("sell_threshold_1h") or 0.25),
+            '1m': float(self.GetParameter("sell_threshold_1m") or 0.15),
+            '5m': float(self.GetParameter("sell_threshold_5m") or 0.05),
+            '15m': float(self.GetParameter("sell_threshold_15m") or 0.1),
+            '1w': float(self.GetParameter("sell_threshold_1w") or 1.5),
+            '1M': float(self.GetParameter("sell_threshold_1M") or 2.5),
+        }
+
+        self.min_buy_signals = int(self.GetParameter("min_buy_signals") or 4)
+        self.min_sell_signals = int(self.GetParameter("min_sell_signals") or 4)
+
         self.previous_histograms = {key: None for key in self.macds.keys()}
-        self.buy_histogram_threshold = float(self.GetParameter("buy_histogram_threshold") or 0.1)
-        self.sell_histogram_threshold = float(self.GetParameter("sell_histogram_threshold") or 0.1)
-        self.min_required_signals = int(self.GetParameter("min_required_signals") or 5)
 
     def custom_macd(self, minutes):
         macd = self.MACD(self.symbol, 12, 26, 9, MovingAverageType.Wilders, Resolution.Minute, Field.SevenBar)
@@ -57,19 +77,19 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             histogram = macd.Current.Value - macd.Signal.Current.Value
 
             if self.previous_histograms[key] is not None:
-                if self.previous_histograms[key] <= self.buy_histogram_threshold and histogram > self.buy_histogram_threshold:
-                    buy_signals += 1
-                if self.previous_histograms[key] >= -self.sell_histogram_threshold and histogram < -self.sell_histogram_threshold:
+                if self.previous_histograms[key] <= self.sell_threshold[key] and histogram > self.sell_threshold[key]:
                     sell_signals += 1
+                if self.previous_histograms[key] >= -self.buy_threshold[key] and histogram < -self.buy_threshold[key]:
+                    buy_signals += 1
 
             self.previous_histograms[key] = histogram
 
-        if holdings <= 0 and buy_signals >= self.min_required_signals:
+        if holdings <= 0 and buy_signals >= self.min_buy_signals:
             self.SetHoldings(self.symbol, 0.9)
-        elif holdings > 0 and sell_signals >= self.min_required_signals:
+        elif holdings > 0 and sell_signals >= self.min_sell_signals:
             self.Liquidate(self.symbol)
 
-'''
+#'''
 
 
 '''
@@ -369,16 +389,23 @@ class MyAlgorithm(QCAlgorithm):
 '''   
 
 
-#'''
+'''
 #benchmark just buy and hold ticker
 class BuyAndHoldAlgorithm(QCAlgorithm):
 
     def Initialize(self):
-        self.SetStartDate(2023, 1, 1)
+        start_date = self.GetParameter("start_date") or "2023-01-01"
+        end_date = self.GetParameter("end_date") or datetime.today().strftime('%Y-%m-%d')
+
+        start_year, start_month, start_day = map(int, start_date.split('-'))
+        end_year, end_month, end_day = map(int, end_date.split('-'))
+
+        self.SetStartDate(start_year, start_month, start_day)
+        self.SetEndDate(end_year, end_month, end_day)
         self.SetCash(100000)
 
-        # Get the ticker symbol from the user input or use "SPY" as the default value
-        ticker = self.GetParameter("ticker") or "SPY"
+        ticker = self.GetParameter("ticker") or "AAPL"
+
 
         self.symbol = self.AddEquity(ticker, Resolution.Daily).Symbol
 
