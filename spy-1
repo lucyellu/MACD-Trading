@@ -1,9 +1,9 @@
-# beats market ytd $115 vs $113
+# beats market ytd $115 vs $113 (2023) $90 vs $82
 
 from AlgorithmImports import *
 from datetime import timedelta, datetime
-#
-# '''
+
+#'''
 class IntradayMACDAlgorithm(QCAlgorithm):
     def Initialize(self):
         start_date = self.GetParameter("start_date") or "2023-01-01"
@@ -107,6 +107,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             self.SetHoldings(self.symbol, 0)
 '''
 
+#
 '''
 
 #benchmark just buy and hold ticker
