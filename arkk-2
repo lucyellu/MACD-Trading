@@ -29,23 +29,23 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         }
         self.buy_threshold = {
             '1m': float(self.GetParameter("buy_threshold_1m") or 0.01),
-            '5m': float(self.GetParameter("buy_threshold_5m") or 0.06),
+            '5m': float(self.GetParameter("buy_threshold_5m") or 0.08),
             '10m': float(self.GetParameter("buy_threshold_10m") or 0.1),
-            '15m': float(self.GetParameter("buy_threshold_15m") or 0.1),
+            '15m': float(self.GetParameter("buy_threshold_15m") or 0.05),
             '30m': float(self.GetParameter("buy_threshold_30m") or 0.1),
             '60m': float(self.GetParameter("buy_threshold_60m") or 0.1),
-            '1440m': float(self.GetParameter("buy_threshold_1440m") or 0.1),
-            '10080m': float(self.GetParameter("buy_threshold_10080m") or 0.1),  
+            '1440m': float(self.GetParameter("buy_threshold_1440m") or 0.2),
+            '10080m': float(self.GetParameter("buy_threshold_10080m") or 3),  
         }
         self.sell_threshold = {
             '1m': float(self.GetParameter("sell_threshold_1m") or 0.01),
             '5m': float(self.GetParameter("sell_threshold_5m") or 0.06),
             '10m': float(self.GetParameter("sell_threshold_10m") or 0.1),
-            '15m': float(self.GetParameter("sell_threshold_15m") or 0.1),
-            '30m': float(self.GetParameter("sell_threshold_30m") or 0.1),
+            '15m': float(self.GetParameter("sell_threshold_15m") or 0.05),
+            '30m': float(self.GetParameter("sell_threshold_30m") or 0.05),
             '60m': float(self.GetParameter("sell_threshold_60m") or 0.1),
             '1440m': float(self.GetParameter("sell_threshold_1440m") or 0.2),
-            '10080m': float(self.GetParameter("sell_threshold_10080m") or 0.1),
+            '10080m': float(self.GetParameter("sell_threshold_10080m") or 2),
         }
         self.min_buy_signals = int(self.GetParameter("min_buy_signals") or 1)
         self.min_sell_signals = int(self.GetParameter("min_sell_signals") or 1)
