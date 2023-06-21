@@ -85,6 +85,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         shares_to_buy = int(self.GetParameter("shares_to_buy") or 100)
         shares_to_sell = int(self.GetParameter("shares_to_sell") or 100)     
         
+
         if holdings <= 2100 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
         elif holdings > 0 and sell_signals >= self.min_sell_signals:
@@ -99,6 +100,14 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             self.SetHoldings(self.symbol, 0.9)
         elif holdings > 0 and sell_signals >= self.min_sell_signals:
             self.SetHoldings(self.symbol, 0)
+#'''
+
+=======
+        if holdings <= 200 and buy_signals >= self.min_buy_signals:
+            self.SetHoldings(self.symbol, 0.9)
+        elif holdings > 0 and sell_signals >= self.min_sell_signals:
+            self.SetHoldings(self.symbol, 0)
+
 #'''
 
 
