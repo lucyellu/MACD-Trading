@@ -78,18 +78,26 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             histogram = macd.Current.Value - macd.Signal.Current.Value
             if self.previous_histograms[key] is not None:
                 if self.previous_histograms[key] <= self.sell_threshold[key] and histogram > self.sell_threshold[key]:
-                    sell_signals += 1                 
+                    sell_signals += 1   
+                    self.Debug(f"Sell signal triggered for {key} MACD")  # Debugging line
+
                 if self.previous_histograms[key] >= -self.buy_threshold[key] and histogram < -self.buy_threshold[key]:
                     buy_signals += 1
+                    self.Debug(f"Buy signal triggered for {key} MACD")  # Debugging line
+
             self.previous_histograms[key] = histogram
         shares_to_buy = int(self.GetParameter("shares_to_buy") or 200)
         shares_to_sell = int(self.GetParameter("shares_to_sell") or 200)     
         
-        if holdings <= 606 and buy_signals >= self.min_buy_signals:
+        if holdings <= 600 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
+            self.Debug(f"Bought {shares_to_buy} shares")  # Debugging line 
 
         if holdings > 0 and sell_signals >= self.min_sell_signals:
             self.Sell(self.symbol, shares_to_sell)
+            self.Debug(f"Sold {shares_to_sell} shares")  # Debugging line  
+ 
+
 #'''
 
 
