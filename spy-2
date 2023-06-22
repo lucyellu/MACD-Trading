@@ -86,10 +86,10 @@ class IntradayMACDAlgorithm(QCAlgorithm):
                     self.Debug(f"Buy signal triggered for {key} MACD")  # Debugging line
 
             self.previous_histograms[key] = histogram
-        shares_to_buy = int(self.GetParameter("shares_to_buy") or 200)
-        shares_to_sell = int(self.GetParameter("shares_to_sell") or 200)     
+        shares_to_buy = int(self.GetParameter("shares_to_buy") or 100)
+        shares_to_sell = int(self.GetParameter("shares_to_sell") or 100)     
         
-        if holdings <= 600 and buy_signals >= self.min_buy_signals:
+        if holdings <= 300 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
             self.Debug(f"Bought {shares_to_buy} shares")  # Debugging line 
 
