@@ -49,7 +49,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             '10080m': float(self.GetParameter("sell_threshold_10080m") or 4),
         }
         self.min_buy_signals = int(self.GetParameter("min_buy_signals") or 1)
-        self.min_sell_signals = int(self.GetParameter("min_sell_signals") or 2)
+        self.min_sell_signals = int(self.GetParameter("min_sell_signals") or 1)
         self.previous_histograms = {key: None for key in self.macds.keys()}
         
     def custom_macd(self, minutes):
