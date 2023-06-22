@@ -31,7 +31,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             '1m': float(self.GetParameter("buy_threshold_1m") or 0.03),
             '5m': float(self.GetParameter("buy_threshold_5m") or 0.2),
             '10m': float(self.GetParameter("buy_threshold_10m") or 0.1),
-            '15m': float(self.GetParameter("buy_threshold_15m") or 0.3),
+            '15m': float(self.GetParameter("buy_threshold_15m") or 0.2),
             '30m': float(self.GetParameter("buy_threshold_30m") or 0.1),
             '60m': float(self.GetParameter("buy_threshold_60m") or 0.3),
             '1440m': float(self.GetParameter("buy_threshold_1440m") or 1),
@@ -81,19 +81,20 @@ class IntradayMACDAlgorithm(QCAlgorithm):
                 if self.previous_histograms[key] >= -self.buy_threshold[key] and histogram < -self.buy_threshold[key]:
                     buy_signals += 1
             self.previous_histograms[key] = histogram
-        shares_to_buy = int(self.GetParameter("shares_to_buy") or 200)
-        shares_to_sell = int(self.GetParameter("shares_to_sell") or 200)     
+        shares_to_buy = int(self.GetParameter("shares_to_buy") or 100)
+        shares_to_sell = int(self.GetParameter("shares_to_sell") or 100)     
         
-        if holdings <= 660 and buy_signals >= self.min_buy_signals:
-            self.SetHoldings(self.symbol, 0.9)
-        elif holdings > 0 and sell_signals >= self.min_sell_signals:
-            self.SetHoldings(self.symbol, 0)
+        if holdings <= 400 and buy_signals >= self.min_buy_signals:
+            self.Buy(self.symbol, shares_to_buy)
+
+        if holdings > 0 and sell_signals >= self.min_sell_signals:
+            self.Sell(self.symbol, shares_to_sell)
         
 #'''
 
 
 '''
-        if holdings <= 202 and buy_signals >= self.min_buy_signals:
+        if holdings <= 400 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
 
         if holdings > 0 and sell_signals >= self.min_sell_signals:
@@ -105,8 +106,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             self.SetHoldings(self.symbol, 0)
 '''
 
-#
-'''
+#'''
 
 #benchmark just buy and hold ticker
 class BuyAndHoldAlgorithm(QCAlgorithm):
