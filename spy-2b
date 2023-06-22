@@ -36,17 +36,17 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             '30m': float(self.GetParameter("buy_threshold_30m") or 0.4),
             '60m': float(self.GetParameter("buy_threshold_60m") or 0.3),
             '1440m': float(self.GetParameter("buy_threshold_1440m") or 1),
-            '10080m': float(self.GetParameter("buy_threshold_10080m") or 2),  
+            '10080m': float(self.GetParameter("buy_threshold_10080m") or 1),  
         }
         self.sell_threshold = {
             '1m': float(self.GetParameter("sell_threshold_1m") or 0.03),
-            '5m': float(self.GetParameter("sell_threshold_5m") or 0.2),
+            '5m': float(self.GetParameter("sell_threshold_5m") or 0.1),
             '10m': float(self.GetParameter("sell_threshold_10m") or 0.4),
             '15m': float(self.GetParameter("sell_threshold_15m") or 0.1),
             '30m': float(self.GetParameter("sell_threshold_30m") or 0.4),
             '60m': float(self.GetParameter("sell_threshold_60m") or 0.3),
             '1440m': float(self.GetParameter("sell_threshold_1440m") or 1),
-            '10080m': float(self.GetParameter("sell_threshold_10080m") or 2),
+            '10080m': float(self.GetParameter("sell_threshold_10080m") or 1),
         }
         self.min_buy_signals = int(self.GetParameter("min_buy_signals") or 1)
         self.min_sell_signals = int(self.GetParameter("min_sell_signals") or 1)
@@ -82,10 +82,10 @@ class IntradayMACDAlgorithm(QCAlgorithm):
                 if self.previous_histograms[key] >= -self.buy_threshold[key] and histogram < -self.buy_threshold[key]:
                     buy_signals += 1
             self.previous_histograms[key] = histogram
-        shares_to_buy = int(self.GetParameter("shares_to_buy") or 200)
-        shares_to_sell = int(self.GetParameter("shares_to_sell") or 200)     
+        shares_to_buy = int(self.GetParameter("shares_to_buy") or 100)
+        shares_to_sell = int(self.GetParameter("shares_to_sell") or 100)     
         
-        if holdings <= 400 and buy_signals >= self.min_buy_signals:
+        if holdings <= 300 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
 
         if holdings > 0 and sell_signals >= self.min_sell_signals:
