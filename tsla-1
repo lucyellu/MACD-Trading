@@ -1,7 +1,8 @@
 from AlgorithmImports import *
 from datetime import timedelta, datetime
 
-#  '''
+#  
+# '''
 class IntradayMACDAlgorithm(QCAlgorithm):
     def Initialize(self):
         start_date = self.GetParameter("start_date") or "2023-01-01"
@@ -32,7 +33,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             '10m': float(self.GetParameter("buy_threshold_10m") or 10),
             '15m': float(self.GetParameter("buy_threshold_15m") or 10),
             '30m': float(self.GetParameter("buy_threshold_30m") or 10),
-            '60m': float(self.GetParameter("buy_threshold_60m") or 0.2),
+            '60m': float(self.GetParameter("buy_threshold_60m") or 0.3),
             '1440m': float(self.GetParameter("buy_threshold_1440m") or 10),
             '10080m': float(self.GetParameter("buy_threshold_10080m") or 10),  
         }
@@ -42,7 +43,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             '10m': float(self.GetParameter("sell_threshold_10m") or 10),
             '15m': float(self.GetParameter("sell_threshold_15m") or 10),
             '30m': float(self.GetParameter("sell_threshold_30m") or 10),
-            '60m': float(self.GetParameter("sell_threshold_60m") or 0.2),
+            '60m': float(self.GetParameter("sell_threshold_60m") or 0.3),
             '1440m': float(self.GetParameter("sell_threshold_1440m") or 10),
             '10080m': float(self.GetParameter("sell_threshold_10080m") or 10),
         }
@@ -85,7 +86,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         shares_to_buy = int(self.GetParameter("shares_to_buy") or 30)
         shares_to_sell = int(self.GetParameter("shares_to_sell") or 30)     
         
-        if holdings <= 200 and buy_signals >= self.min_buy_signals:
+        if holdings <= 30 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
             self.Debug(f"Bought {shares_to_buy} shares")  # Debugging line   
                      
