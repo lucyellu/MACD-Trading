@@ -1,6 +1,8 @@
+# 2018 to now 165k, vs 235k
 from AlgorithmImports import *
 from datetime import timedelta, datetime
-#'''
+ 
+# '''
 class IntradayMACDAlgorithm(QCAlgorithm):
     def Initialize(self):
         start_date = self.GetParameter("start_date") or "2023-01-01"
@@ -10,9 +12,9 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         self.SetStartDate(start_year, start_month, start_day)
         self.SetEndDate(end_year, end_month, end_day)
         self.SetCash(100000)
-        ticker = self.GetParameter("ticker") or "ARKK"
+        ticker = self.GetParameter("ticker") or "SPY"
         self.AddEquity(ticker, Resolution.Minute)
-        self.SetWarmUp(365)
+        self.SetWarmUp(7)
         self.symbol = self.Securities[ticker].Symbol
        
         self.macds = {
@@ -27,24 +29,24 @@ class IntradayMACDAlgorithm(QCAlgorithm):
 
         }
         self.buy_threshold = {
-            '1m': float(self.GetParameter("buy_threshold_1m") or 0.01),
-            '5m': float(self.GetParameter("buy_threshold_5m") or 0.01),
-            '10m': float(self.GetParameter("buy_threshold_10m") or 0.1),
-            '15m': float(self.GetParameter("buy_threshold_15m") or 0.15),
-            '30m': float(self.GetParameter("buy_threshold_30m") or 0.1),
-            '60m': float(self.GetParameter("buy_threshold_60m") or 0.1),
-            '1440m': float(self.GetParameter("buy_threshold_1440m") or 0.1),
-            '10080m': float(self.GetParameter("buy_threshold_10080m") or 0.1),  
+            '1m': float(self.GetParameter("buy_threshold_1m") or 0.03),
+            '5m': float(self.GetParameter("buy_threshold_5m") or 0.1),
+            '10m': float(self.GetParameter("buy_threshold_10m") or 0.4),
+            '15m': float(self.GetParameter("buy_threshold_15m") or 0.1),
+            '30m': float(self.GetParameter("buy_threshold_30m") or 0.4),
+            '60m': float(self.GetParameter("buy_threshold_60m") or 0.3),
+            '1440m': float(self.GetParameter("buy_threshold_1440m") or 1),
+            '10080m': float(self.GetParameter("buy_threshold_10080m") or 1),  
         }
         self.sell_threshold = {
-            '1m': float(self.GetParameter("sell_threshold_1m") or 0.05),
+            '1m': float(self.GetParameter("sell_threshold_1m") or 0.03),
             '5m': float(self.GetParameter("sell_threshold_5m") or 0.1),
-            '10m': float(self.GetParameter("sell_threshold_10m") or 0.1),
-            '15m': float(self.GetParameter("sell_threshold_15m") or 0.2),
-            '30m': float(self.GetParameter("sell_threshold_30m") or 0.1),
-            '60m': float(self.GetParameter("sell_threshold_60m") or 0.1),
-            '1440m': float(self.GetParameter("sell_threshold_1440m") or 0.2),
-            '10080m': float(self.GetParameter("sell_threshold_10080m") or 0.1),
+            '10m': float(self.GetParameter("sell_threshold_10m") or 0.4),
+            '15m': float(self.GetParameter("sell_threshold_15m") or 0.1),
+            '30m': float(self.GetParameter("sell_threshold_30m") or 0.4),
+            '60m': float(self.GetParameter("sell_threshold_60m") or 0.3),
+            '1440m': float(self.GetParameter("sell_threshold_1440m") or 1),
+            '10080m': float(self.GetParameter("sell_threshold_10080m") or 1),
         }
         self.min_buy_signals = int(self.GetParameter("min_buy_signals") or 1)
         self.min_sell_signals = int(self.GetParameter("min_sell_signals") or 1)
@@ -65,6 +67,7 @@ class IntradayMACDAlgorithm(QCAlgorithm):
 
         self.symbol = self.AddEquity(ticker, Resolution.Minute).Symbol
 
+
     def OnData(self, data):
         if self.IsWarmingUp:
             return
@@ -75,29 +78,29 @@ class IntradayMACDAlgorithm(QCAlgorithm):
             histogram = macd.Current.Value - macd.Signal.Current.Value
             if self.previous_histograms[key] is not None:
                 if self.previous_histograms[key] <= self.sell_threshold[key] and histogram > self.sell_threshold[key]:
-                    sell_signals += 1      
+                    sell_signals += 1         
                     self.Debug(f"Sell signal triggered for {key} MACD")  # Debugging line
+
                 if self.previous_histograms[key] >= -self.buy_threshold[key] and histogram < -self.buy_threshold[key]:
                     buy_signals += 1
                     self.Debug(f"Buy signal triggered for {key} MACD")  # Debugging line
 
             self.previous_histograms[key] = histogram
-        shares_to_buy = int(self.GetParameter("shares_to_buy") or 1000)
-        shares_to_sell = int(self.GetParameter("shares_to_sell") or 1000)       
+        shares_to_buy = int(self.GetParameter("shares_to_buy") or 100)
+        shares_to_sell = int(self.GetParameter("shares_to_sell") or 100)     
         
-        if holdings <= 2100 and buy_signals >= self.min_buy_signals:
+        if holdings <= 300 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
-            self.Debug(f"Bought {shares_to_buy} shares")  # Debugging line 
-
+            self.Debug(f"Bought {shares_to_buy} shares")  # Debugging line   
+                     
         if holdings > 0 and sell_signals >= self.min_sell_signals:
             self.Sell(self.symbol, shares_to_sell)
-            self.Debug(f"Sold {shares_to_sell} shares")  # Debugging line   
-        
+            self.Debug(f"Sold {shares_to_sell} shares")  # Debugging line    
 #'''
 
 
 '''
-        if holdings <= 2100 and buy_signals >= self.min_buy_signals:
+        if holdings <= 202 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
 
         if holdings > 0 and sell_signals >= self.min_sell_signals:
@@ -143,4 +146,3 @@ class BuyAndHoldAlgorithm(QCAlgorithm):
             self.purchased = True
 
  #           '''
-
