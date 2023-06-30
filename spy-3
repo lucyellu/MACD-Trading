@@ -1,9 +1,7 @@
 from AlgorithmImports import *
 from datetime import timedelta, datetime
 
-
-#
-'''
+#'''
 class IntradayMACDAlgorithm(QCAlgorithm):
     def Initialize(self):
         start_date = self.GetParameter("start_date") or "2023-01-01"
@@ -12,15 +10,13 @@ class IntradayMACDAlgorithm(QCAlgorithm):
         end_year, end_month, end_day = map(int, end_date.split('-'))
         self.SetStartDate(start_year, start_month, start_day)
         self.SetEndDate(end_year, end_month, end_day)
-        self.SetCash(10000000)
+        self.SetCash(100000)
         ticker = self.GetParameter("ticker") or "SPY"
         self.AddEquity(ticker, Resolution.Minute)
         self.SetWarmUp(7)
         self.symbol = self.Securities[ticker].Symbol
 
         self.macds = {
-
-
             '1m': self.MACD(self.symbol, 12, 26, 9, MovingAverageType.Wilders, Resolution.Minute, Field.SevenBar),
             '5m': self.custom_macd(5),
             '10m': self.custom_macd(10),
@@ -85,29 +81,38 @@ class IntradayMACDAlgorithm(QCAlgorithm):
                     self.Debug(f"Buy signal triggered for {key} MACD")  # Debugging line
                 
             self.previous_histograms[key] = histogram
-        shares_to_buy = int(self.GetParameter("shares_to_buy") or 19000)
-        shares_to_sell = int(self.GetParameter("shares_to_sell") or 19000)     
+        shares_to_buy = int(self.GetParameter("shares_to_buy") or 400)
+        shares_to_sell = int(self.GetParameter("shares_to_sell") or 400)  
+        shares_to_trade = 0.5 * shares_to_buy   
         
-        if holdings <= 19000 and buy_signals >= self.min_buy_signals:
+        if holdings <= shares_to_trade and buy_signals >= self.min_buy_signals:
+            self.Buy(self.symbol, shares_to_trade)
+            self.Debug(f"Bought {shares_to_trade} shares")  # Debugging line   
+                     
+        if holdings >= 0 and sell_signals >= self.min_sell_signals:
+            self.Sell(self.symbol, shares_to_trade)
+            self.Debug(f"Sold {shares_to_trade} shares")  # Debugging line   
+
+#'''
+
+'''
+        if holdings <= 23000 and buy_signals >= self.min_buy_signals:
             self.Buy(self.symbol, shares_to_buy)
             self.Debug(f"Bought {shares_to_buy} shares")  # Debugging line   
                      
         if holdings > 0 and sell_signals >= self.min_sell_signals:
             self.Sell(self.symbol, shares_to_sell)
             self.Debug(f"Sold {shares_to_sell} shares")  # Debugging line    
-#'''
 
-'''
-        if holdings <= 202 and buy_signals >= self.min_buy_signals:
-            self.Buy(self.symbol, shares_to_buy)
-        if holdings > 0 and sell_signals >= self.min_sell_signals:
-            self.Sell(self.symbol, shares_to_sell)
-        if holdings <= 200 and buy_signals >= self.min_buy_signals:
+
+        if holdings <= shares_to_buy and buy_signals >= self.min_buy_signals:
             self.SetHoldings(self.symbol, 0.9)
+
         elif holdings > 0 and sell_signals >= self.min_sell_signals:
             self.SetHoldings(self.symbol, 0)
 '''
-#'''
+#
+'''
 #benchmark just buy and hold ticker
 class BuyAndHoldAlgorithm(QCAlgorithm):
     def Initialize(self):
@@ -117,7 +122,7 @@ class BuyAndHoldAlgorithm(QCAlgorithm):
         end_year, end_month, end_day = map(int, end_date.split('-'))
         self.SetStartDate(start_year, start_month, start_day)
         self.SetEndDate(end_year, end_month, end_day)
-        self.SetCash(10000000)
+        self.SetCash(100000)
         ticker = self.GetParameter("ticker") or "SPY"
         self.symbol = self.AddEquity(ticker, Resolution.Minute).Symbol
         # Set a flag to indicate whether we have already purchased the security
@@ -125,8 +130,10 @@ class BuyAndHoldAlgorithm(QCAlgorithm):
     def OnData(self, data):
         if not data.ContainsKey(self.symbol):
             return
+
         # If we have not purchased the security yet, buy it and set the purchased flag to True
         if not self.purchased:
-            self.SetHoldings(self.symbol, 0.89)
-            self.purchased = True
- #           '''
+            
+            self.SetHoldings(self.symbol, 1)
+            self.purchased = True    
+#'''
