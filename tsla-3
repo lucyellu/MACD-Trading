@@ -1,6 +1,8 @@
 from AlgorithmImports import *
 from datetime import timedelta, datetime
 
+#tuned for 2023-01-01 to present
+#30 shares
 #'''
 class IntradayMACDAlgorithm(QCAlgorithm):
     def Initialize(self):
